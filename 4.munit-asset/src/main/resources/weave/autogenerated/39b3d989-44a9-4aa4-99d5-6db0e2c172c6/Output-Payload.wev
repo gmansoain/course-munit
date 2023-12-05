@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_39b3d989_44a9_4aa4_99d5_6db0e2c172c6_Output_Payload = Array<"Mulesoft" | "Andres Iniesta" | "Johan Cruyff" | "Carles Puyol">
+

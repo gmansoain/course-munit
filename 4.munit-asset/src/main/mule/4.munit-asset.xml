@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="getString" doc:id="3a4e602d-76d4-47d1-b7ff-03c553da4f97" >
+		<http:listener doc:name="GET /assert-string" doc:id="73769f84-780c-45db-8b34-6f796f5b0b19" config-ref="HTTP_Listener_config" path="/assert-string" allowedMethods="GET"/>
+		<set-payload value='#[%dw 2.0&#10;output text/plain&#10;---&#10;"Mulesoft"]' doc:name="Set Payload - String" doc:id="6845e938-8d74-4c83-af16-912704c0d174" />
+		<logger level="INFO" doc:name="Log Payload" doc:id="d4989790-c9d7-4426-9271-21f0d9a80861" message='#[payload]'/>
+	</flow>
+	<flow name="getJSONObject" doc:id="cbfa70c7-3a9d-4c32-a3e4-a099260b5082" >
+		<http:listener doc:name="GET /assert-json" doc:id="9e6143a2-c776-4366-aa22-4179fb32a7f1" config-ref="HTTP_Listener_config" path="/assert-json" allowedMethods="GET"/>
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"name": "Madonna",&#10;	"hostpital": "UCLH",&#10;	"category": "pediatrician",&#10;	"availability": "9.00 a.m. - 11.00 a.m.",&#10;	"fee": 500&#10;}]' doc:name="Set Payload - JSON" doc:id="84de8f93-9c9a-4735-9234-626b500efa63" />
+		<logger level="INFO" doc:name="Log PAYLOAD" doc:id="fc972f5a-777c-49a9-a064-b4515f32110c" message="#[payload]"/>
+	</flow>
+	<flow name="getArray" doc:id="39b3d989-44a9-4aa4-99d5-6db0e2c172c6" >
+		<http:listener doc:name="GET /assert-array" doc:id="07a29c56-cfbc-4449-a3a1-e84a21438844" config-ref="HTTP_Listener_config" path="/assert-array" allowedMethods="GET"/>
+		<set-payload value='#[["Mulesoft", "Andres Iniesta", "Johan Cruyff", "Carles Puyol"]]' doc:name="Set Payload - Array" doc:id="273c83f7-2547-4f04-af02-5ffdea00c5ab" />
+		<logger level="INFO" doc:name="Log PAYLOAD" doc:id="e7d6b70d-3ffa-40e5-a79d-7d079bbc66a6" message="#[payload]"/>
+	</flow>
+</mule>

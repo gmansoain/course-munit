@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_cbfa70c7_3a9d_4c32_a3e4_a099260b5082_Output_Variables_medicalCategories = Array<"obstetric" | "pediatrician" | "dermatology" | "gynaecology">
+
