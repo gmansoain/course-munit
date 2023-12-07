@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_af8c3100_1092_4731_acbc_dc5162c6d3fa_Output_Payload = {| stringLenght: String |}
+
