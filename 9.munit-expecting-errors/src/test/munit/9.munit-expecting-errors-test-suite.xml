@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="9.munit-expecting-errors-test-suite.xml" />
+	<munit:test name="storeKeyValuePairSuccessTest" doc:id="b6cfe644-d558-4f8b-a682-730ddd8eb7ae" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event - key is not null" doc:id="ffb8f11c-c03d-4b2b-857e-0db7a579ad16" >
+				<munit:payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"key": "firstName",&#10;	"value": "Gonzalo"&#10;}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to storeKeyValuePair" doc:id="27a68d83-5c9b-469a-ad6f-71877f66875e" name="storeKeyValuePair"/>
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Log storeKeyValuePairSuccessTest" doc:id="068e26bb-e52b-4821-8299-252ba6044d01" message='#["storeKeyValuePairSuccessTest LOG VALIDATION"]'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="storeKeyValuePairErrorNullPayloadTestCase" doc:id="376cf5ff-f854-403f-8553-3a4c2814b24e" expectedErrorType="MULE:UNKNOWN">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event - key is null" doc:id="765cea56-7e67-45cb-a3c2-77ffb8caa66b">
+				<munit:payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"key": null,&#10;	"value": "Gonzalo"&#10;}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to storeKeyValuePair" doc:id="f605af97-0ce6-442e-8423-e07f430060fc" name="storeKeyValuePair" />
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Log storeKeyValuePairErrorNullPayloadTestCase" doc:id="939f9440-486a-4e68-b85f-f7a926dedec6" message='#["storeKeyValuePairErrorNullPayloadTestCase LOG VALIDATION"]' />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sayGreetingsSuccessTestCase" doc:id="98660b4f-e9c3-4bd2-8677-13d0c90e927f" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="b80cebdf-2104-4145-9a06-a7db687fdf5b" >
+				<munit:payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"firstName": "Gonzalo",&#10;	"lastName": "Marcos"&#10;}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to sayGreetings" doc:id="0d88e67d-0708-4a72-a813-8105aee5876d" name="sayGreetings"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that - PAYLOAD Response is OK" doc:id="ca9293f1-cdb7-4488-8a5e-e957ed4bdfdf" expression="#[payload.greetings]" is='#[MunitTools::equalTo("Hola hola! Welcome Gonzalo")]'/>
+			<logger level="INFO" doc:name="Log sayGreetingsSuccessTestCase" doc:id="f1621d75-aec5-4f48-8341-56c1aad9e51a" message='#["sayGreetingsSuccessTestCase LOG VALIDATION"]' />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sayGreetingsNullKeyTestCase" doc:id="16205f7e-b049-49c1-afd9-29e5965427b1" expectedErrorType="MULE:EXPRESSION">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="2bc5853f-30fd-4475-a9ac-41a5456f1158" >
+				<munit:payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"firstName": null,&#10;	"lastName": "Marcos"&#10;}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to sayGreetings" doc:id="987e182d-299f-43c7-a759-8c33e4d89e67" name="sayGreetings" />
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Log sayGreetingsNullKeyTestCase" doc:id="bb517d7f-8d71-45be-8e53-559722c0329c" message='#["sayGreetingsNullKeyTestCase LOG VALIDATION"]' />
+		</munit:validation>
+	</munit:test>
+
+</mule>
