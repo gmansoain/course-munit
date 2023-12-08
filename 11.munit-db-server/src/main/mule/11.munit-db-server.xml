@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getEmployeesJobTitle" doc:id="f245c54d-4d6f-45f3-a788-d660f782bce0" >
+		<http:listener doc:name="GET /employees/{jobID}" doc:id="5f54b042-0b2d-46f3-b675-182c5f609ccf" config-ref="HTTP_Listener_config" path="/employees/{jobID}" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Log START" doc:id="9a951ed8-c3fe-497f-9930-d7b2375b841c" message='#["Log START"]'/>
+		<set-variable value="#[attributes.uriParams.jobID]" doc:name="jobID" doc:id="0ce2d7e6-716b-43ab-8aa9-b829ee58a69f" variableName="jobID"/>
+		<db:select doc:name="Select" doc:id="8f4e0849-8756-4b07-b66f-0e18ab02b960" config-ref="${DB_CONFIG}">
+			<db:sql ><![CDATA[SELECT * FROM employees WHERE JobID = :jobID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	jobID: vars.jobID
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice" doc:id="ead535b2-45ce-4b79-8a15-79dbc8a39047" >
+			<when expression="#[sizeOf(payload) &gt; 0]">
+				<set-payload value="#[payload[0].JobTitle]" doc:name="Set Payload" doc:id="92e7d3bd-305b-4a9b-b67c-05998f4dc844" />
+			</when>
+			<otherwise >
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"errorMessage": "Job Title does not exist in the DB"&#10;}]' doc:name="Set Payload" doc:id="383e15f0-4bc0-4968-af02-9547f91e8331" />
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Log PAYLOAD" doc:id="a2c49333-983f-484a-a05a-80e9d6fd8582" message="#[payload]"/>
+		<logger level="INFO" doc:name="Log END" doc:id="327b5edb-11d4-4adb-b1a6-b1e18182395a" message='#["Log END"]' />
+	</flow>
+</mule>

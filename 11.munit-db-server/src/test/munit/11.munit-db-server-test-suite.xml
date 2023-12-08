@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dbserver="http://www.mulesoft.org/schema/mule/dbserver"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/dbserver http://www.mulesoft.org/schema/mule/dbserver/current/mule-dbserver.xsd">
+	<munit:config name="11.munit-db-server-test-suite.xml" />
+	<configuration-properties doc:name="Configuration properties" doc:id="c2234e97-a91e-4795-9f80-69bb57f32f04" file="properties.yaml" />
+	<db:config name="TEST_Database_Config_MySQL" doc:name="Database Config" doc:id="7502ba8a-ab3c-4871-8618-dc5cbaf97d86" >
+		<db:generic-connection url="jdbc:h2:tcp://localhost/mem:gon" driverClassName="org.h2.Driver" />
+	</db:config>
+	<dbserver:config name="MUnit_DB_Server_Config" doc:name="MUnit DB Server Config" doc:id="8333a1b6-2aff-43b6-a4ba-1041c75ad55a" >
+		<dbserver:connection csv="employees.csv" database="gon" connectionStringParameters="MODE=MySQL"/>
+	</dbserver:config>
+	<munit:test name="getEmployeesJobTitleSuccessTestCase" doc:id="ddfa8703-a557-4e07-8ac8-7905e15e1c80" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when - jobID var is FSE" doc:id="263a26e4-56f7-4091-840b-7f431c099c8b" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0ce2d7e6-716b-43ab-8aa9-b829ee58a69f" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="jobID" value='#["FSE"]' />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getEmployeesJobTitle" doc:id="ec50b8f2-ce02-441c-9b22-baaa276a02e4" name="getEmployeesJobTitle"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that - Job Title is Full Stack Engineer" doc:id="91160b5e-6aa1-4684-9efb-653a4d78c387" expression="#[payload]" is='#[MunitTools::equalTo("Full Stack Engineer")]'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="getEmployeeJobTitleNOTSuccessTestCase" doc:id="286d7e6d-b82a-4da7-93ac-19c2569c1a5c" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when - jobID var is null" doc:id="9f47e1d1-ca0d-40f3-9436-2c5169db3ddf" processor="set-variable" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0ce2d7e6-716b-43ab-8aa9-b829ee58a69f" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="jobID" value="#[null]" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getEmployeesJobTitle" doc:id="76ded12d-e5a5-494b-863e-8db09f30b067" name="getEmployeesJobTitle" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="fa012a3e-6948-44f8-9185-60670ac8457f" is='#[MunitTools::equalTo("Job Title does not exist in the DB")]' expression="#[payload.errorMessage]"/>
+		</munit:validation>
+	</munit:test>
+
+</mule>
